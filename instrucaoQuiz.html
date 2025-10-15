@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>S.O.S Digital - Guia Escolhido</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .mobile-container {
+        width: 100%;
+        max-width: 414px;
+        background-color: white;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .header {
+        background-color: #0056b3;
+        padding: 20px 10px;
+        position: relative;
+        text-align: center;
+    }
+
+    .back-button {
+        position: absolute;
+        left: 15px;
+        top: 20px;
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+    }
+
+    .logo {
+        height: 60px;
+        margin: 0 auto;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+      color: rgb(0, 0, 0);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 12px;
+      font-size: 24px;
+      line-height: 1.5;
+    }
+
+    .content h2 {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .content p {
+      margin-bottom: 10px;
+    }
+
+    .content span {
+      font-weight: bold;
+      color: rgb(214, 122, 1);
+    }
+
+    .dica {
+      font-weight: bold;
+      color: rgb(214, 122, 1);
+      margin-top: 10px;
+    }
+
+    .button {
+      margin-top: auto;
+      background-color: orange;
+      color: #002147;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background-color 0.3s;
+      user-select: none;
+    }
+
+    .button:hover {
+      background-color: #ffa500;
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-container">
+        <div class="header">
+            <a href="menu.html" class="back-button">Voltar</a>
+        <img src="img/SOS DIGITAL LOGUINHO.png" alt="S.O.S Digital" class="logo">
+    </div>
+
+    <div class="content">
+      <h2>Instruções</h2>
+      <p>📌 <span>1</span> Leia com atenção da pergunta.</p>
+      <p>📌 <span>2</span> Escolha a alternativa que achar correta.</p>
+      <p>📌 <span>3</span> Após responder, você verá uma explicação que te ajudará a entender o que fazer em cada situação.</p>
+      <p class="dica">Dica: Não se preocupe se errar!<br>O importante é aprender aos poucos.</p>
+
+      <button class="button" onclick="window.location.href='quiz.html'">Prosseguir</button>
+    </div>
+  </div>
+</body>
+</html>

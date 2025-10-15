@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.O.S Digital - Escolha seu Guia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .mobile-container {
+            width: 100%;
+            max-width: 414px;
+            height: 100vh;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background-color: #0056b3;
+            padding: 35px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: 15px;
+            top: 22px;
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            z-index: 10;
+        }
+        
+        .logo {
+            height: 100px;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .content {
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .title {
+            font-size: 20px;
+            color: #0056b3;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 25px;
+        }
+        
+        .description {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        .divider {
+            height: 1px;
+            background-color: #ddd;
+            margin: 20px 0;
+        }
+        
+        .guides-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .guide {
+            width: 48%;
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .guide-image {
+            width: 120px;
+            height: 140px;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 3px solid #0056b3;
+            border-radius: 8px;
+            box-shadow: 0 12px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .guide-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #0056b3;
+            margin-bottom: 15px;
+        }
+        
+        .choose-button {
+            display: inline-block;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+            max-width: 200px;
+            margin: 5px auto;
+            text-decoration: none;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .choose-button:hover {
+            background-color: #003d82;
+            transform: translateY(-2px);
+        }
+        
+        .choose-button:active {
+            transform: translateY(1px);
+            background-color: #002d5a;
+        }
+        
+        .animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .guide-image:hover {
+            transform: scale(1.03);
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <div class="header">
+            <a href="identificacao.html" class="back-button">Voltar</a>
+            <img src="img/SOS DIGITAL LOGUINHO.png" alt="S.O.S. Digital Logo" class="logo">
+        </div>
+        
+        <div class="content">
+            <h1 class="title">Escolha seu guia</h1>
+            <p class="description">
+                Antes de seguir, escolha quem vai te acompanhar nessa jornada digital.<br>
+                Cada guia tem um jeito especial de ensinar e proteger.<br>
+                Selecione aquele que mais combina com você!
+            </p>
+            
+            <div class="divider"></div>
+            
+            <div class="guides-container">
+                <div class="guide">
+                    <img src="img/Guardião Digital.png" alt="Guardião Digital" class="guide-image animation">
+                    <div class="guide-name">Guardião Digital</div>
+                    <a href="guiaEscolhido.html" class="choose-button" id="chooseGuardian">Escolher Guardião</a>
+                </div>
+                
+                <div class="guide">
+                    <img src="img/Dona Sabedoria.png" alt="Guardia Sabedoria" class="guide-image animation">
+                    <div class="guide-name">Guardiã da Sabedoria</div>
+                    <a href="guiaEscolhido.html" class="choose-button" id="chooseCaptain">Escolher Guardiã</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Animação de hover nos botões
+        const buttons = document.querySelectorAll('.choose-button');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                button.classList.add('animation');
+            });
+            button.addEventListener('mouseleave', () => {
+                button.classList.remove('animation');
+            });
+        });
+        
+        // Lógica de escolha do guia
+        document.getElementById('chooseGuardian').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.setItem('selectedGuide', 'Guardião Digital');
+            window.location.href = 'guiaEscolhido.html';
+        });
+        
+        document.getElementById('chooseCaptain').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.setItem('selectedGuide', 'Capitã Sabedoria');
+            window.location.href = 'guiaEscolhido.html';
+        });
+
+        // Efeito hover nas imagens
+        const guideImages = document.querySelectorAll('.guide-image');
+        guideImages.forEach(img => {
+            img.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05)';
+            });
+            img.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

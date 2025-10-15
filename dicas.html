@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>S.O.S Digital - Dica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 414px;
+            background-color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background-color: #0056b3;
+            padding: 20px 10px;
+            position: relative;
+            text-align: center;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 15px;
+            top: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .logo {
+            height: 60px;
+            margin: 0 auto;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .phrase {
+            font-size: 18px;
+            text-align: center;
+            color: #333;
+        }
+
+        .guide-image {
+            max-width: 100%;
+        }
+
+        .continue-button {
+            background-color: #0056b3;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            width: 100%;
+            max-width: 300px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: background 0.3s ease;
+        }
+
+        .continue-button:hover {
+            background-color: #003d82;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <div class="header">
+            <span class="back-button" id="backButton">Voltar</span>
+            <img src="img/SOS DIGITAL LOGUINHO.png" alt="S.O.S Digital" class="logo">
+        </div>
+
+        <div class="content">
+            <p class="phrase" id="phraseText"></p>
+            <img id="guideImage" src="" alt="Imagem da dica" class="guide-image"/>
+            <button class="continue-button" id="continueButton">Prosseguir</button>
+        </div>
+    </div>
+
+    <script>
+        const frases = {
+            1: "Recebe uma mensagem de alguém dizendo que trocou de número e pedindo dinheiro?",
+            2: "Recebeu um boleto por WhatsApp ou e-mail e não estava esperando?",
+            3: "Alguém liga dizendo ser do banco e pede sua senha?",
+            4: "Dizem que você ganhou um prêmio, mas tem que pagar uma taxa?",
+            5: "Recebeu um link com promoção ou sorteio?",
+            6: "Alguém liga dizendo que tem um problema no seu celular ou computador e pede acesso?",
+            7: "Como criar uma senha segura?",
+            8: "Viu um anúncio de brinde nas redes sociais?",
+            9: "Viu um produto muito barato em um site que não conhece?",
+            10: "Recebeu uma mensagem dizendo que seu celular precisa de atualização urgente com um link?",
+            11:"Parabéns! Você chegou ao fim das Dicas Digitais."
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectedGuide = localStorage.getItem('selectedGuide') || 'Guardião Digital';
+            let currentTipNumber = parseInt(localStorage.getItem('currentTipNumber')) || 1;
+
+            const phraseText = document.getElementById('phraseText');
+            const guideImage = document.getElementById('guideImage');
+            const personagemKey = selectedGuide === 'Capitã Sabedoria' ? 'Capita' : 'Guardiao';
+
+            // Atualiza frase e imagem
+            phraseText.textContent = frases[currentTipNumber] || "Dica não encontrada.";
+            guideImage.src = `img/dica${personagemKey}${currentTipNumber}.png`;
+
+            // Prosseguir para próxima dica
+            document.getElementById('continueButton').addEventListener('click', () => {
+                currentTipNumber++;
+                if (currentTipNumber > 11) {
+                    localStorage.removeItem('currentTipNumber');
+                    window.location.href = 'menu.html';
+                } else {
+                    localStorage.setItem('currentTipNumber', currentTipNumber);
+                    window.location.reload();
+                }
+            });
+
+            // Voltar para dica anterior ou menu
+            document.getElementById('backButton').addEventListener('click', () => {
+                currentTipNumber--;
+                if (currentTipNumber < 1) {
+                    localStorage.removeItem('currentTipNumber');
+                    window.location.href = 'menu.html';
+                } else {
+                    localStorage.setItem('currentTipNumber', currentTipNumber);
+                    window.location.reload();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

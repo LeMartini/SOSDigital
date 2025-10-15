@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>S.O.S Digital - Quiz com Dica</title>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+    }
+    body {
+      background-color: #f5f5f5;
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh;
+    }
+    .mobile-container {
+      width: 100%; max-width: 414px;
+      background-color: white;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .header {
+      background-color: #0056b3;
+      padding: 20px 10px;
+      position: relative;
+      text-align: center;
+    }
+    .back-button {
+      position: absolute;
+      left: 15px;
+      top: 20px;
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .logo {
+      height: 60px;
+      margin: 0 auto;
+    }
+    .content {
+      flex-grow: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .guide-image {
+      max-width: 80%;
+    }
+    .question {
+      font-size: 18px;
+      text-align: center;
+      color: #333;
+    }
+    .options {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .option {
+      background-color: #eee;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.3s;
+    }
+    .option:hover {
+      background-color: #ddd;
+    }
+    .selected {
+      background-color: #cce5ff;
+    }
+    .submit-button, .continue-button {
+      background-color: #0056b3;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      padding: 15px;
+      width: 100%;
+      max-width: 300px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: background 0.3s ease;
+    }
+    .continue-button:hover, .submit-button:hover {
+      background-color: #003d82;
+    }
+
+    /* Tela da dica */
+
+#tipContainer {
+
+    position: absolute;
+    top: 100px; /* Ajuste a altura do cabeçalho para que a tela da dica comece abaixo dele */
+    left: 0; right: 0; bottom: 0;
+    background: white;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px;
+    gap: 15px;
+    z-index: 10;
+}
+
+    .phrase {
+      font-size: 18px;
+      text-align: center;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-container">
+    <div class="header">
+      <span class="back-button" onclick="goBack()">Voltar</span>
+      <img src="img/SOS DIGITAL LOGUINHO.png" alt="S.O.S Digital" class="logo">
+    </div>
+
+    <!-- Tela do quiz -->
+    <div class="content" id="quizContent">
+      <img id="quizImage" src="" alt="Imagem da pergunta" class="guide-image"/>
+      <p class="question">Qual é a melhor atitude nesse caso?</p>
+      <div class="options" id="optionsContainer"></div>
+      <button class="submit-button" onclick="submitAnswer()">Ver Resposta</button>
+    </div>
+
+    <!-- Tela da dica -->
+    <div id="tipContainer">
+      <p class="phrase" id="tipPhrase"></p>
+      <p id="correctAnswer" style="background-color: #d4edda; color: #155724; border-radius: 8px; padding: 10px; max-width: 80%; text-align: center; font-weight: bold;"></p>
+      <img id="tipImage" src="" alt="Imagem da dica" class="guide-image"/>
+      <button class="continue-button" onclick="nextQuestion()">Prosseguir</button>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Config Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjPniBNDgZ8pQd3UiDJfbmfXObd-_GrM4",
+      authDomain: "sos-digital.firebaseapp.com",
+      projectId: "sos-digital",
+      storageBucket: "sos-digital.appspot.com",
+      messagingSenderId: "852474540415",
+      appId: "1:852474540415:web:13180c3e6b39a385816a4a"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Dados
+    const personagem = localStorage.getItem("personagem") || "Guardiao";
+    const userName = localStorage.getItem("userName") || "Anônimo";
+
+    const quizData = [
+        {
+            imagem: "1",
+            opcoes: [
+                "Faz a transferência rapidamente",
+                "Confirma a identidade por uma ligação ou outro meio antes de qualquer coisa",
+                "Ignora, pode ser alguém brincando"
+            ],
+            correta: "Confirma a identidade por uma ligação ou outro meio antes de qualquer coisa"
+        },
+        {
+            imagem: "2",
+            opcoes: [
+                "Paga logo para não gerar juros",
+                "Pergunta a alguém da família se acha que é verdadeiro",
+                "Confere diretamente com a empresa ou acessa o site oficial para validar"
+            ],
+            correta: "Confere diretamente com a empresa ou acessa o site oficial para validar"
+        },
+        {
+            imagem: "3",
+            opcoes: [
+                "Não passa nenhuma informação, desliga e liga diretamente para seu banco",
+                "Fornece, para resolver rápido",
+                "Fala que vai pensar e depois decide"
+            ],
+            correta: "Não passa nenhuma informação, desliga e liga diretamente para seu banco"
+        },
+        {
+            imagem: "4",
+            opcoes: [
+                "Paga para garantir o prêmio",
+                "Guarda a mensagem para decidir depois",
+                "Pesquisa se a empresa realmente faz esse tipo de promoção e verifica nos canais oficiais"
+            ],
+            correta: "Pesquisa se a empresa realmente faz esse tipo de promoção e verifica nos canais oficiais"
+        },
+        {
+            imagem: "5",
+            opcoes: [
+                "Clica para conferir",
+                "Antes de clicar, verifica se é do site oficial da empresa",
+                "Encaminha para conhecidos perguntando se alguém já viu isso"
+            ],
+            correta: "Antes de clicar, verifica se é do site oficial da empresa"
+        },
+        {
+            imagem: "6",
+            opcoes: [
+                "Permite o acesso para que resolvam o problema",
+                "Ouve até o final para entender o que querem",
+                "Desliga e busca o suporte oficial ou alguém de confiança"
+            ],
+            correta: "Desliga e busca o suporte oficial ou alguém de confiança"
+        },
+        {
+            imagem: "7",
+            opcoes: [
+                "Usar datas de aniversário ou nomes de familiares",
+                "Criar senhas com letras, números e símbolos, e não compartilhar com ninguém",
+                "Anotar a senha em um papel próximo do computador para não esquecer"
+            ],
+            correta: "Criar senhas com letras, números e símbolos, e não compartilhar com ninguém"
+        },
+        {
+            imagem: "8",
+            opcoes: [
+                "Desconfia, verifica se essa promoção aparece no site oficial da loja",
+                "Preenche o cadastro rapidamente para não perder a oportunidade",
+                "Compartilha com amigos para ver quem mais recebeu"
+            ],
+            correta: "Desconfia, verifica se essa promoção aparece no site oficial da loja"
+        },
+        {
+            imagem: "9",
+            opcoes: [
+                "Compra, pois o preço está ótimo",
+                "Verifica se o site é confiável, buscando avaliações e se tem selo de segurança",
+                "Pergunta para amigos se já compraram lá"
+            ],
+            correta: "Verifica se o site é confiável, buscando avaliações e se tem selo de segurança"
+        },
+        {
+            imagem: "10",
+            opcoes: [
+                "Clica e faz a instalação",
+                "Verifica nas configurações do próprio celular se há atualizações oficiais",
+                "Ignora, mas mantém a mensagem caso precise depois"
+            ],
+            correta: "Verifica nas configurações do próprio celular se há atualizações oficiais"
+        }
+    ];
+
+    let index = 0;
+    let selectedAnswer = null;
+
+    const quizImage = document.getElementById("quizImage");
+    const optionsContainer = document.getElementById("optionsContainer");
+
+    function carregarPergunta() {
+      const pergunta = quizData[index];
+      quizImage.src = `img/quiz${personagem}${pergunta.imagem}.png`;
+      optionsContainer.innerHTML = "";
+      selectedAnswer = null;
+
+      pergunta.opcoes.forEach((opcao, i) => {
+        const div = document.createElement("div");
+        div.classList.add("option");
+        div.textContent = `${String.fromCharCode(97 + i)}) ${opcao}`;
+        div.onclick = () => {
+          document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+          div.classList.add("selected");
+          selectedAnswer = opcao;
+        };
+        optionsContainer.appendChild(div);
+      });
+
+      document.getElementById("quizContent").style.display = "flex";
+      document.getElementById("tipContainer").style.display = "none";
+    }
+
+    async function submitAnswer() {
+      if (!selectedAnswer) {
+        alert("Por favor, selecione uma opção.");
+        return;
+      }
+
+      const correta = quizData[index].correta;
+      const situacao = selectedAnswer === correta ? "certa" : "errada";
+
+      try {
+        await db.collection("respostasQuiz").add({
+          nomeUsuario: userName,
+          respostaEscolhida: selectedAnswer,
+          respostaQuiz: index + 1,
+          situacaoResposta: situacao,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (e) {
+        console.error("Erro ao salvar resposta:", e);
+      }
+
+      // Exibe a dica
+      const pergunta = quizData[index];
+      document.getElementById("tipPhrase").textContent = pergunta.dica;
+      document.getElementById("tipImage").src = `img/respostaCorreta${personagem}${pergunta.imagem}.png`;
+      document.getElementById("correctAnswer").textContent = "Resposta correta: " + correta;
+
+      
+
+      document.getElementById("quizContent").style.display = "none";
+      document.getElementById("tipContainer").style.display = "flex";
+    }
+
+    function nextQuestion() {
+      index++;
+      if (index >= quizData.length) {
+        window.location.href = "menu.html";
+      } else {
+        carregarPergunta();
+      }
+    }
+
+    function goBack() {
+      const isTipVisible = document.getElementById("tipContainer").style.display === "flex";
+      if (isTipVisible) {
+        document.getElementById("tipContainer").style.display = "none";
+        document.getElementById("quizContent").style.display = "flex";
+      } else if (index > 0) {
+        index--;
+        carregarPergunta();
+      } else {
+        window.history.back();
+      }
+    }
+
+    window.onload = carregarPergunta;
+  </script>
+</body>
+</html>

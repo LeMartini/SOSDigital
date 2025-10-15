@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>S.O.S Digital - Guia Escolhido</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 414px;
+            background-color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background-color: #0056b3;
+            padding: 20px 10px;
+            position: relative;
+            text-align: center;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 15px;
+            top: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .logo {
+            height: 60px;
+            margin: 0 auto;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 1px;
+        }
+
+        .guide-image {
+            margin-top: 20px;
+            max-width: 100%;
+            margin-bottom: 0; /* remove espaço entre imagem e primeiro botão */
+        }
+
+        .action-button {
+            background-color: #0056b3;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            width: 180%;
+            max-width: 380px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: background 0.3s ease;
+        }
+
+        .action-button:hover {
+            background-color: #003d82;
+        }
+
+        .bottom-button {
+            margin-top: 10px; /* adiciona espaçamento entre os dois botões */
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <div class="header">
+            <a href="mostraOpcaoTeste.html" class="back-button">Voltar</a>
+            <img src="img/SOS DIGITAL LOGUINHO.png" alt="S.O.S Digital" class="logo">
+        </div>
+
+        <div class="content">
+            <img id="guideImage" src="" alt="Guia escolhido" class="guide-image"/>
+
+            <button class="action-button" id="tipsButton">Dicas Digitais</button>
+            <button class="action-button bottom-button" id="quizButton">Teste Seus Conhecimentos</button>
+            <button class="action-button bottom-button" id="avaliationPage">Avaliar App</button>
+        </div>
+    </div>
+
+    <script>
+
+    const guides = {
+        'Guardião Digital': {
+            image: 'img/menuGuardiao.png',
+            tipsPage: 'dicas.html',
+            quizPage: 'instrucaoQuiz.html',
+            avaliationPage: 'avaliacaoApp.html'
+        },
+
+        'Capitã Sabedoria': {
+            image: 'img/menuCapita.png',
+            tipsPage: 'dicas.html',
+            quizPage: 'instrucaoQuiz.html',
+            avaliationPage: 'avaliacaoApp.html'
+        }
+
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const selectedGuide = localStorage.getItem('selectedGuide') || 'Guardião Digital';
+        const guideData = guides[selectedGuide];
+        document.getElementById('guideImage').src = guideData.image;
+        document.getElementById('tipsButton').addEventListener('click', () => {
+            window.location.href = guideData.tipsPage;
+        });
+
+        document.getElementById('quizButton').addEventListener('click', () => {
+            window.location.href = guideData.quizPage;
+        });
+
+        // CORREÇÃO: Adicionando o evento de clique para o botão de Avaliação
+        document.getElementById('avaliationPage').addEventListener('click', () => {
+            window.location.href = guideData.avaliationPage;
+        });
+    });
+   </script>
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>S.O.S Digital - Avaliação</title>
+
+  <style>
+
+    * {
+
+      margin: 0; padding: 0; box-sizing: border-box;
+
+      font-family: 'Segoe UI', Roboto, sans-serif;
+
+    }
+
+    body {
+
+      background-color: #f5f5f5;
+
+      display: flex; justify-content: center; align-items: center;
+
+      min-height: 100vh;
+
+    }
+
+    .mobile-container {
+
+      width: 100%; max-width: 414px;
+
+      background-color: white;
+
+      height: 100vh;
+
+      display: flex;
+
+      flex-direction: column;
+
+      overflow: hidden;
+
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+      position: relative;
+
+    }
+
+    .header {
+
+      background-color: #0056b3;
+
+      padding: 20px 10px;
+
+      text-align: center;
+
+    }
+
+    .logo {
+
+      height: 60px;
+
+      margin: 0 auto;
+
+    }
+
+    .content {
+
+      flex-grow: 1;
+
+      padding: 20px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+
+      gap: 20px;
+
+    }
+
+    .guide-image {
+
+      max-width: 80%;
+
+    }
+
+    .options {
+
+      width: 100%;
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 10px;
+
+    }
+
+    .option {
+
+      background-color: #eee;
+
+      padding: 12px;
+
+      border-radius: 8px;
+
+      cursor: pointer;
+
+      text-align: center;
+
+      transition: background-color 0.3s;
+
+    }
+
+    .option:hover {
+
+      background-color: #ddd;
+
+    }
+
+    .selected {
+
+      background-color: #cce5ff;
+
+    }
+
+    .submit-button {
+
+      background-color: #0056b3;
+
+      color: white;
+
+      font-size: 18px;
+
+      border: none;
+
+      border-radius: 10px;
+
+      padding: 15px;
+
+      width: 100%;
+
+      max-width: 300px;
+
+      font-weight: bold;
+
+      cursor: pointer;
+
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+
+      transition: background 0.3s ease;
+
+    }
+
+    .submit-button:hover {
+
+      background-color: #003d82;
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="mobile-container">
+
+    <div class="header">
+
+      <img src="img/SOS DIGITAL LOGUINHO.png" alt="S.O.S Digital" class="logo">
+
+    </div>
+
+
+
+    <div class="content">
+
+      <img id="quizImage" src="" alt="Imagem da pergunta" class="guide-image"/>
+
+      <div class="options" id="optionsContainer"></div>
+
+      <button class="submit-button" onclick="proximaPergunta()">Próximo</button>
+
+    </div>
+
+  </div>
+
+
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
+
+
+  <script>
+
+    // Config Firebase
+
+    const firebaseConfig = {
+
+      apiKey: "AIzaSyCjPniBNDgZ8pQd3UiDJfbmfXObd-_GrM4",
+
+      authDomain: "sos-digital.firebaseapp.com",
+
+      projectId: "sos-digital",
+
+      storageBucket: "sos-digital.appspot.com",
+
+      messagingSenderId: "852474540415",
+
+      appId: "1:852474540415:web:13180c3e6b39a385816a4a"
+
+    };
+
+
+
+    firebase.initializeApp(firebaseConfig);
+
+    const db = firebase.firestore();
+
+
+
+    // Variáveis de controle
+
+    const personagem = localStorage.getItem("personagem") || "Guardiao";
+
+    const userName = localStorage.getItem("userName") || "julia";
+
+    let perguntaAtualIndex = 0;
+
+    let respostaSelecionada = null;
+
+
+
+    // Perguntas do questionário
+
+    const questionarioData = [
+
+      {
+
+        imagem: "1",
+
+        opcoes: ["Muito fácil de usar", "Razoavelmente fácil", "Um pouco difícil", "Muito difícil de usar"]
+
+      },
+
+      {
+
+        imagem: "2",
+
+        opcoes: ["Muito claras", "Razoavelmente claras", "Poderiam ser mais claras", "Não entendi bem"]
+
+      },
+
+      {
+
+        imagem: "3",
+
+        opcoes: ["Adequados", "Podiam ser maiores", "Estavam pequenos", "Estavam muito pequenos"]
+
+      },
+
+      {
+
+        imagem: "4",
+
+        opcoes: ["Completamente seguro", "Em sua maioria seguro", "Neutro", "Não me senti seguro"]
+
+      },
+
+      {
+
+        imagem: "5",
+
+        opcoes: ["Aprendi bastante", "Aprendi algumas coisas", "Não foi novidade", "Não aprendi nada"]
+
+      },
+
+      {
+
+        imagem: "6",
+
+        opcoes: ["Muito mais confiante", "Um pouco mais confiante", "Minha confiança continua a mesma", "Menos confiante"]
+
+      },
+
+      {
+
+        imagem: "7",
+
+        opcoes: ["Pouco útil", "Razoavelmente útil", "Neutro", "Útil", "Muito útil"]
+
+      },
+
+      {
+
+        imagem: "8",
+
+        opcoes: ["A clareza das informações", "A interatividade do quiz", "O design e o visual", "A relevância do tema"]
+
+      },
+
+      {
+
+        imagem: "9",
+
+        opcoes: ["Adicionar mais perguntas", "Melhorar a navegação", "Adicionar mais dicas e informações", "Melhorar a aparência"]
+
+      },
+
+      {
+
+        imagem: "10",
+
+        opcoes: ["Com certeza indicaria", "Provavelmente indicaria", "Talvez", "Não indicaria"]
+
+      }
+
+    ];
+
+
+
+    const quizImage = document.getElementById("quizImage");
+
+    const optionsContainer = document.getElementById("optionsContainer");
+
+
+
+    function carregarPergunta() {
+
+      if (perguntaAtualIndex < questionarioData.length) {
+
+        const perguntaAtual = questionarioData[perguntaAtualIndex];
+
+        quizImage.src = `img/avaliacao${personagem}${perguntaAtual.imagem}.png`;
+
+        optionsContainer.innerHTML = "";
+
+        respostaSelecionada = null;
+
+
+
+        perguntaAtual.opcoes.forEach(opcao => {
+
+          const div = document.createElement("div");
+
+          div.classList.add("option");
+
+          div.textContent = opcao;
+
+          div.onclick = () => {
+
+            document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+
+            div.classList.add("selected");
+
+            respostaSelecionada = opcao;
+
+          };
+
+          optionsContainer.appendChild(div);
+
+        });
+
+      } else {
+
+        alert("Questionário finalizado! Obrigado pela sua participação.");
+
+        window.location.href = "menu.html";
+
+      }
+
+    }
+
+
+
+    async function proximaPergunta() {
+
+      if (!respostaSelecionada) {
+
+        alert("Por favor, selecione uma opção.");
+
+        return;
+
+      }
+
+
+
+      const data = {
+
+        nomeUsuario: userName,
+
+        perguntaRespondida: perguntaAtualIndex + 1,
+
+        resposta: respostaSelecionada,
+
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+
+      };
+
+
+
+      try {
+
+        await db.collection("respostasAvaliacao").add(data);
+
+        console.log("Resposta salva com sucesso:", data);
+
+      } catch (e) {
+
+        console.error("Erro ao salvar resposta:", e);
+
+        alert("Ocorreu um erro ao salvar a resposta.");
+
+      }
+
+
+
+      perguntaAtualIndex++;
+
+      carregarPergunta();
+
+    }
+
+
+
+    window.onload = carregarPergunta;
+
+  </script>
+
+</body>
+
+</html>

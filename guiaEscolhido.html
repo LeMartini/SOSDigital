@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.O.S Digital - Guia Escolhido</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 414px;
+            height: 100vh;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background-color: #0056b3;
+            padding: 35px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 15px;
+            top: 22px;
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            z-index: 10;
+        }
+
+        .logo {
+            height: 100px;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .content {
+            padding: 25px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 20px;
+            color: #0056b3;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .confirmation-message {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .guide-features {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        .guide-image-container {
+            margin: 20px 0 0 0;
+            width: 100%;
+        }
+
+        .guide-image {
+            width: 110%;
+            max-width: 350px;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .continue-button-container {
+            margin-top: 1px;
+            text-align: center;
+        }
+
+        .continue-button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 20px 0;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            width: 500%;
+            max-width: 350px;
+            margin-left: -150%;
+        }
+
+        .continue-button:hover {
+            background-color: #003d82;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <div class="header">
+            <a href="escolhaGuia.html" class="back-button">Voltar</a>
+            <img src="img/SOS DIGITAL LOGUINHO.png" alt="S.O.S. Digital Logo" class="logo">
+        </div>
+
+        <div class="content">
+            <h1 class="title">Guia escolhido</h1>
+            <p class="confirmation-message" id="confirmationMessage"></p>
+            <p class="guide-features" id="guideFeatures"></p>
+
+            <div class="guide-image-container">
+                <img id="guideImage" src="" alt="Guia escolhido" class="guide-image">
+            </div>
+
+            <div class="continue-button-container">
+                <button class="continue-button" id="continueButton">Prosseguir</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados dos guias
+        const guides = {
+            'Guardião Digital': {
+                image: 'img/guardiao escolhido.png',
+                message: 'Que legal, você escolheu o Guardião Digital!',
+                nextPage: 'mostraOpcaoMenu.html'
+            },
+            'Capitã Sabedoria': {
+                image: 'img/capita escolhida.png',
+                message: 'Que legal, você escolheu a Capitã Sabedoria!',
+                nextPage: 'mostraOpcaoMenu.html'
+            }
+        };
+
+        // Carrega a escolha do usuário
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedGuide = localStorage.getItem('selectedGuide') || 'Guardião Digital';
+            const guideData = guides[selectedGuide];
+
+            // Atualiza a página com os dados do guia escolhido
+            document.getElementById('confirmationMessage').textContent = guideData.message;
+            document.getElementById('guideFeatures').textContent = guideData.features;
+            document.getElementById('guideImage').src = guideData.image;
+
+            // Configura o botão de continuar
+            document.getElementById('continueButton').addEventListener('click', function() {
+                window.location.href = guideData.nextPage;
+            });
+        });
+    </script>
+</body>
+</html>
