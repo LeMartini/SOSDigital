@@ -200,15 +200,10 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const personagemCru = localStorage.getItem("personagem") || "guardiao"; 
+   const selectedGuide = localStorage.getItem('selectedGuide') || 'Guardião Digital';
 
-    let personagem;
-    if (personagemCru.toLowerCase().includes("capita")) {
-        personagem = "Capita";
-    } else {
-        // Se não for capita, assume guardiao (default ou qualquer outra coisa)
-        personagem = "Guardiao";
-    }
+    // 2. Cria a chave de imagem correta ("Capita" ou "Guardiao") baseada no nome completo.
+    const personagem = selectedGuide === 'Capitã Sabedoria' ? 'Capita' : 'Guardiao';
 
     const userName = localStorage.getItem("userName") || "Anônimo";
 
