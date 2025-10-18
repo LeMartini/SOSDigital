@@ -71,10 +71,11 @@
       border-radius: 8px;
       cursor: pointer;
       text-align: center;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s, border-color 0.3s; /* Transição para a borda */
+      border: 1px solid #eee; /* Adiciona uma borda neutra */
     }
     .option:hover {
-      background-color: #ddd;
+    background-color: #ddd;
     }
     .selected {
       background-color: #cce5ff;
@@ -150,10 +151,11 @@
       background-color: #eee !important; 
     }
     .selected {
-       /* Garante que a opção escolhida fique visível, mesmo desabilitada */
-       opacity: 1;
-       background-color: #cce5ff;
-       border: 1px solid #0056b3;
+         /* Estilo Azul para Seleção */
+        opacity: 1;
+        background-color: #cce5ff; /* Fundo Azul Claro */
+        border: 1px solid #0056b3; /* Borda Azul Escura */
+        color: #003d82; /* Cor do texto em azul mais escuro para contraste */
     }
 
   </style>
