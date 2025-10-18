@@ -201,8 +201,12 @@
     const db = firebase.firestore();
 
     // Dados
-    const personagem = localStorage.getItem("personagem") || "Guardiao";
-    const userName = localStorage.getItem("userName") || "Anônimo";
+    // NOVAS LINHAS (APLICAR EM QUIZ.HTML E AVALIACAO.HTML)
+    const personagemCru = localStorage.getItem("personagem") || "guardiao";
+    const personagemParaArquivo = personagemCru.charAt(0).toUpperCase() + personagemCru.slice(1);
+    const personagem = personagemParaArquivo;
+    
+    const userName = localStorage.getItem("userName") || "Anônimo";
 
     const quizData = [
         {

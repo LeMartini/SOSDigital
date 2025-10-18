@@ -230,9 +230,11 @@
 
     // Variáveis de controle
 
-    const personagem = localStorage.getItem("personagem") || "Guardiao";
-
-    const userName = localStorage.getItem("userName") || "julia";
+    const personagemCru = localStorage.getItem("personagem") || "guardiao";
+    const personagemParaArquivo = personagemCru.charAt(0).toUpperCase() + personagemCru.slice(1);
+    const personagem = personagemParaArquivo;
+    
+    const userName = localStorage.getItem("userName") || "Anônimo";
 
     let perguntaAtualIndex = 0;
 
