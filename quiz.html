@@ -200,13 +200,17 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Dados
-    // NOVAS LINHAS (APLICAR EM QUIZ.HTML E AVALIACAO.HTML)
-    const personagemCru = localStorage.getItem("personagem") || "guardiao";
-    const personagemParaArquivo = personagemCru.charAt(0).toUpperCase() + personagemCru.slice(1);
-    const personagem = personagemParaArquivo;
-    
-    const userName = localStorage.getItem("userName") || "Anônimo";
+    const personagemCru = localStorage.getItem("personagem") || "guardiao"; 
+
+    let personagem;
+    if (personagemCru.toLowerCase().includes("capita")) {
+        personagem = "Capita";
+    } else {
+        // Se não for capita, assume guardiao (default ou qualquer outra coisa)
+        personagem = "Guardiao";
+    }
+
+    const userName = localStorage.getItem("userName") || "Anônimo";
 
     const quizData = [
         {
