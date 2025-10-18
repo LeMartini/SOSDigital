@@ -228,13 +228,17 @@
 
 
 
-    // Variáveis de controle
-
-    const personagemCru = localStorage.getItem("personagem") || "guardiao";
-    const personagemParaArquivo = personagemCru.charAt(0).toUpperCase() + personagemCru.slice(1);
-    const personagem = personagemParaArquivo;
-    
-    const userName = localStorage.getItem("userName") || "Anônimo";
+    // Voltar para dica anterior ou menu
+            document.getElementById('backButton').addEventListener('click', () => {
+                currentTipNumber--;
+                if (currentTipNumber < 1) {
+                    localStorage.removeItem('currentTipNumber');
+                    window.location.href = 'menu.html';
+                } else {
+                    localStorage.setItem('currentTipNumber', currentTipNumber);
+                    window.location.reload();
+                }
+            });
 
     let perguntaAtualIndex = 0;
 
