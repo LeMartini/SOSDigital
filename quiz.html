@@ -119,6 +119,43 @@
       text-align: center;
       color: #333;
     }
+
+    .correct-feedback-bg {
+      background-color: #e6ffe6; /* Verde muito claro para o fundo */
+      transition: background-color 0.5s ease;
+    }
+    .wrong-feedback-bg {
+      background-color: #ffe6e6; /* Vermelho muito claro para o fundo */
+      transition: background-color 0.5s ease;
+    }
+
+    /* Mantenha suas classes de feedback de opção, mas vamos usá-las menos */
+    .correct-answer {
+      background-color: #d4edda; /* Verde claro */
+      color: #155724; 
+      border: 1px solid #c3e6cb;
+      font-weight: bold;
+    }
+    .wrong-answer {
+      background-color: #f8d7da; /* Vermelho claro */
+      color: #721c24; 
+      border: 1px solid #f5c6cb;
+      font-weight: bold;
+    }
+    .disabled {
+      /* Ajuste a opacidade para que as opções fiquem desabilitadas, mas sem cor */
+      opacity: 0.7; 
+      cursor: default;
+      /* Remove a seleção azul, se houver */
+      background-color: #eee !important; 
+    }
+    .selected {
+       /* Garante que a opção escolhida fique visível, mesmo desabilitada */
+       opacity: 1;
+       background-color: #cce5ff;
+       border: 1px solid #0056b3;
+    }
+
   </style>
 </head>
 <body>
@@ -262,11 +299,31 @@
 
     let index = 0;
     let selectedAnswer = null;
+    let hasCheckedAnswer = false; // Novo estado para controlar o fluxo
 
     const quizImage = document.getElementById("quizImage");
     const optionsContainer = document.getElementById("optionsContainer");
+    const tipFeedbackMessage = document.getElementById("tipFeedbackMessage");
+    const correctAnswerDisplay = document.getElementById("correctAnswerDisplay");
+    const quizContent = document.getElementById("quizContent");
+    const submitButton = document.querySelector(".submit-button"); // Usar a variável do botão
 
     function carregarPergunta() {
+      // 1. Resetar o estado da tela
+      quizContent.classList.remove("correct-feedback-bg", "wrong-feedback-bg");
+      submitButton.textContent = "Validar Resposta";
+      submitButton.onclick = submitAnswer; // Garante que o clique volte para o fluxo principal
+      submitButton.disabled = false;
+      submitButton.style.opacity = 1;
+      hasCheckedAnswer = false; 
+
+      // 2. Resetar opções
+      document.querySelectorAll(".option").forEach(o => {
+          o.classList.remove("selected", "correct-answer", "wrong-answer", "disabled");
+          o.onclick = (e) => handleOptionClick(e.target);
+      });
+      
+      // ... (carregamento da pergunta) ...
       const pergunta = quizData[index];
       quizImage.src = `img/quiz${personagem}${pergunta.imagem}.png`;
       optionsContainer.innerHTML = "";
@@ -275,12 +332,8 @@
       pergunta.opcoes.forEach((opcao, i) => {
         const div = document.createElement("div");
         div.classList.add("option");
-        div.textContent = `${String.fromCharCode(97 + i)}) ${opcao}`;
-        div.onclick = () => {
-          document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
-          div.classList.add("selected");
-          selectedAnswer = opcao;
-        };
+        div.textContent = opcao;
+        div.onclick = (e) => handleOptionClick(e.target);
         optionsContainer.appendChild(div);
       });
 
@@ -288,38 +341,99 @@
       document.getElementById("tipContainer").style.display = "none";
     }
 
+    function handleOptionClick(element) {
+        if (hasCheckedAnswer) return; // Não permite clicar após a validação
+        document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+        element.classList.add("selected");
+        selectedAnswer = element.textContent.trim();
+    }
+
+
     async function submitAnswer() {
       if (!selectedAnswer) {
         alert("Por favor, selecione uma opção.");
         return;
       }
 
+      if (hasCheckedAnswer) {
+        // Se já verificou, o botão deve levar para a próxima pergunta (fluxo para quem acertou)
+        nextQuestion();
+        return;
+      }
+      
+      hasCheckedAnswer = true;
       const correta = quizData[index].correta;
-      const situacao = selectedAnswer === correta ? "certa" : "errada";
+      const acertou = selectedAnswer === correta;
+      const situacao = acertou ? "certa" : "errada";
+      
+      // 1. DESABILITA as opções e impede novos cliques
+      document.querySelectorAll(".option").forEach(o => {
+          o.onclick = null; // Desabilita novos cliques
+          o.classList.add("disabled"); // Aplica o estilo desabilitado
+      });
+      // Mantém apenas a seleção original
+      document.querySelector(".selected")?.classList.remove("disabled");
 
       try {
         await db.collection("respostasQuiz").add({
-          nomeUsuario: userName,
-          respostaEscolhida: selectedAnswer,
-          respostaQuiz: index + 1,
-          situacaoResposta: situacao,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          // ... (seu código de salvamento) ...
         });
       } catch (e) {
         console.error("Erro ao salvar resposta:", e);
       }
 
-      // Exibe a dica
-      const pergunta = quizData[index];
-      document.getElementById("tipPhrase").textContent = pergunta.dica;
-      document.getElementById("tipImage").src = `img/respostaCorreta${personagem}${pergunta.imagem}.png`;
-      document.getElementById("correctAnswer").textContent = "Resposta correta: " + correta;
+      // 2. FASE 2: Feedback Imediato na Mesma Tela
 
-      
+      if (acertou) {
+          // ACERTOU: Fundo Verde e Próxima Pergunta
+          quizContent.classList.add("correct-feedback-bg");
+          submitButton.textContent = "Próxima Pergunta";
+          // O próximo clique em submitButton vai para nextQuestion() (cai no `if (hasCheckedAnswer)`)
+          
+          // Opcional: Adicionar um pequeno ícone de check na opção correta
+          document.querySelector(".selected")?.classList.add("correct-answer");
 
-      document.getElementById("quizContent").style.display = "none";
-      document.getElementById("tipContainer").style.display = "flex";
+      } else {
+          // ERROU: Fundo Vermelho e Ver Resposta Correta
+          quizContent.classList.add("wrong-feedback-bg");
+          submitButton.textContent = "Ver Resposta Correta";
+          submitButton.onclick = showTipContainer; // Próximo clique vai para a tela de dica
+          
+          // Opcional: Adicionar um pequeno X na opção errada
+          document.querySelector(".selected")?.classList.add("wrong-answer");
+      }
     }
+
+    // NOVA FUNÇÃO para lidar com o clique "Ver Resposta Correta"
+    function showTipContainer() {
+      const pergunta = quizData[index];
+      const correta = pergunta.correta;
+      const tipContinueButton = document.querySelector("#tipContainer .continue-button");
+
+      // 1. Configura as mensagens e estilos na tela de dica (#tipContainer)
+      
+      // Usa o elemento #tipPhrase para mostrar a frase de feedback
+      document.getElementById("tipPhrase").textContent = "Você ERROU. Veja a resposta correta e a imagem da dica:";
+      document.getElementById("tipPhrase").style.color = '#721c24'; // Cor de texto vermelho escuro
+      
+      // 2. Mostra a resposta correta
+      // O ID #correctAnswer já tem o estilo verde no seu HTML e CSS (ótimo!)
+      document.getElementById("correctAnswer").textContent = "Resposta correta: " + correta;
+      document.getElementById("correctAnswer").style.display = 'block'; // Garante que a resposta correta seja exibida
+
+      // 3. Adiciona a Imagem (que é a dica)
+      // Usamos o padrão de nome de arquivo que você já estava usando
+      document.getElementById("tipImage").src = `img/respostaCorreta${personagem}${pergunta.imagem}.png`;
+
+      // 4. Altera o botão da tela de DICA para "Próxima Pergunta"
+      tipContinueButton.onclick = nextQuestion;
+      tipContinueButton.textContent = "Próxima Pergunta";
+
+
+      // 5. Transiciona a tela
+      document.getElementById("quizContent").style.display = "none";
+      document.getElementById("tipContainer").style.display = "flex";
+    }
 
     function nextQuestion() {
       index++;
@@ -331,11 +445,20 @@
     }
 
     function goBack() {
+      // Ajuste a lógica de voltar para garantir que o estado seja resetado
       const isTipVisible = document.getElementById("tipContainer").style.display === "flex";
       if (isTipVisible) {
+        // Se está na tela de dica, volta para a tela do quiz (com feedback)
         document.getElementById("tipContainer").style.display = "none";
         document.getElementById("quizContent").style.display = "flex";
+        
+      } else if (hasCheckedAnswer) {
+          // Se está na tela de feedback imediato, volta ao estado inicial do quiz (pergunta anterior)
+          index--;
+          carregarPergunta(); // Recarrega a pergunta anterior
+          
       } else if (index > 0) {
+        // Volta para a pergunta anterior
         index--;
         carregarPergunta();
       } else {
