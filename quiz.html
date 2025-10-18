@@ -375,12 +375,16 @@
       document.querySelector(".selected")?.classList.remove("disabled");
 
       try {
-        await db.collection("respostasQuiz").add({
-          // ... (seu código de salvamento) ...
-        });
-      } catch (e) {
-        console.error("Erro ao salvar resposta:", e);
-      }
+        await db.collection("respostasQuiz").add({
+          nomeUsuario: userName,
+          respostaEscolhida: selectedAnswer,
+          respostaQuiz: index + 1,
+          situacaoResposta: situacao,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (e) {
+        console.error("Erro ao salvar resposta:", e);
+      }
 
       // 2. FASE 2: Feedback Imediato na Mesma Tela
 
