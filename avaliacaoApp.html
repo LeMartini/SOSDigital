@@ -228,17 +228,16 @@
 
 
 
-    // Voltar para dica anterior ou menu
-            document.getElementById('backButton').addEventListener('click', () => {
-                currentTipNumber--;
-                if (currentTipNumber < 1) {
-                    localStorage.removeItem('currentTipNumber');
-                    window.location.href = 'menu.html';
-                } else {
-                    localStorage.setItem('currentTipNumber', currentTipNumber);
-                    window.location.reload();
-                }
-            });
+    // Variáveis de controle
+
+    // Dados
+// 1. Pega o nome COMPLETO que deve estar salvo ao escolher o guia.
+    const selectedGuide = localStorage.getItem('selectedGuide') || 'Guardião Digital';
+
+    // 2. Cria a chave de imagem correta ("Capita" ou "Guardiao") baseada no nome completo.
+    const personagem = selectedGuide === 'Capitã Sabedoria' ? 'Capita' : 'Guardiao';
+
+    const userName = localStorage.getItem("userName") || "Anônimo";
 
     let perguntaAtualIndex = 0;
 
