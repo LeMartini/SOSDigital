@@ -197,7 +197,7 @@
       <p class="question">Qual é a melhor atitude nesse caso?</p>
       
       <div class="options" id="optionsContainer"></div>
-            <p class="feedback-erro" id="feedbackErro">Resposta Incorreta, não se preocupe, vamos ver a resposta correta?</p>
+            <p class="feedback-erro" id="feedbackMensagem">Resposta Incorreta, não se preocupe, vamos ver a resposta correta?</p>
       <button class="submit-button" onclick="submitAnswer()">Ver Resposta</button>
     </div>
 
@@ -342,7 +342,7 @@
     function carregarPergunta() {
       // 1. Resetar o estado da tela
       quizContent.classList.remove("correct-feedback-bg", "wrong-feedback-bg");
-      document.getElementById("feedbackErro").style.display = 'none'; // USE ISTO
+      document.getElementById("feedbackMensagem").style.display = 'none'; // USE ISTO
       submitButton.textContent = "Validar Resposta";
       submitButton.onclick = submitAnswer; // Garante que o clique volte para o fluxo principal
       submitButton.disabled = false;
@@ -425,9 +425,11 @@
           // ACERTOU: Fundo Verde e Próxima Pergunta
           quizContent.classList.add("correct-feedback-bg");
           submitButton.textContent = "Próxima Pergunta";
-          // O próximo clique em submitButton vai para nextQuestion() (cai no `if (hasCheckedAnswer)`)
-          
-          // Opcional: Adicionar um pequeno ícone de check na opção correta
+
+          feedbackMensagem.textContent = "Você acertou, parabéns, vamos para a próxima pergunta?";
+          feedbackMensagem.classList.add("feedback-sucesso"); // Aplica o estilo verde
+          feedbackMensagem.style.display = 'block'; // Torna visível
+
           document.querySelector(".selected")?.classList.add("correct-answer");
 
       } else {
@@ -435,9 +437,9 @@
           quizContent.classList.add("wrong-feedback-bg");
     
     // MOSTRA A NOVA MENSAGEM DE ERRO (Requisito 1)
-          const feedbackErro = document.getElementById("feedbackErro");
-          feedbackErro.textContent = "Resposta Incorreta, não se preocupe, vamos ver a resposta correta?";
-          feedbackErro.style.display = 'block'; // Torna visível
+          const feedbackMensagem = document.getElementById("feedbackMensagem");
+          feedbackMensagem.textContent = "Resposta Incorreta, não se preocupe, vamos ver a resposta correta?";
+          feedbackMensagem.style.display = 'block'; // Torna visível
           submitButton.textContent = "Ver Resposta Correta";
           submitButton.onclick = showTipContainer; // Próximo clique vai para a tela de dica
           
