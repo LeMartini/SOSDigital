@@ -126,7 +126,7 @@
       transition: background-color 0.5s ease;
     }
     .wrong-feedback-bg {
-      background-color: #ff0015; /* Vermelho muito claro para o fundo */
+      background-color: #ff4756;
       transition: background-color 0.5s ease;
     }
 
@@ -158,6 +158,15 @@
         color: #003d82; /* Cor do texto em azul mais escuro para contraste */
     }
 
+    .feedback-erro {
+    font-size: 16px;
+    font-weight: bold;
+    color: #721c24; /* Vermelho escuro para a mensagem de erro */
+    text-align: center;
+    margin-top: -10px; /* Reduz o espaço com o elemento acima */
+    display: none; /* Começa escondido */
+}
+
   </style>
 </head>
 <body>
@@ -171,7 +180,7 @@
     <div class="content" id="quizContent">
       <img id="quizImage" src="" alt="Imagem da pergunta" class="guide-image"/>
       <p class="question">Qual é a melhor atitude nesse caso?</p>
-      <div class="options" id="optionsContainer"></div>
+      <p class="feedback-erro" id="feedbackErro">Resposta Incorreta, não se preocupe, vamos ver a resposta correta?</p>
       <button class="submit-button" onclick="submitAnswer()">Ver Resposta</button>
     </div>
 
@@ -316,11 +325,13 @@
     function carregarPergunta() {
       // 1. Resetar o estado da tela
       quizContent.classList.remove("correct-feedback-bg", "wrong-feedback-bg");
+      document.getElementById("feedbackErro").style.display = 'none'; // USE ISTO
       submitButton.textContent = "Validar Resposta";
       submitButton.onclick = submitAnswer; // Garante que o clique volte para o fluxo principal
       submitButton.disabled = false;
       submitButton.style.opacity = 1;
       hasCheckedAnswer = false; 
+
 
       // 2. Resetar opções
       document.querySelectorAll(".option").forEach(o => {
@@ -405,6 +416,11 @@
       } else {
           // ERROU: Fundo Vermelho e Ver Resposta Correta
           quizContent.classList.add("wrong-feedback-bg");
+    
+    // MOSTRA A NOVA MENSAGEM DE ERRO (Requisito 1)
+          const feedbackErro = document.getElementById("feedbackErro");
+          feedbackErro.textContent = "Resposta Incorreta, não se preocupe, vamos ver a resposta correta?";
+          feedbackErro.style.display = 'block'; // Torna visível
           submitButton.textContent = "Ver Resposta Correta";
           submitButton.onclick = showTipContainer; // Próximo clique vai para a tela de dica
           
@@ -422,8 +438,8 @@
       // 1. Configura as mensagens e estilos na tela de dica (#tipContainer)
       
       // Usa o elemento #tipPhrase para mostrar a frase de feedback
-      document.getElementById("tipPhrase").textContent = "Você ERROU. Veja a resposta correta e a imagem da dica:";
-      document.getElementById("tipPhrase").style.color = '#721c24'; // Cor de texto vermelho escuro
+       document.getElementById("tipPhrase").textContent = ""; // Garante que está vazio ou define uma nova frase neutra.
+       document.getElementById("tipPhrase").style.color = '#333';
       
       // 2. Mostra a resposta correta
       // O ID #correctAnswer já tem o estilo verde no seu HTML e CSS (ótimo!)
