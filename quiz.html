@@ -531,6 +531,38 @@
       document.getElementById("tipContainer").style.display = "flex";
     }
 
+    function showCompletionScreen() {
+        const tipContainer = document.getElementById("tipContainer");
+        const tipPhrase = document.getElementById("tipPhrase");
+        const correctAnswer = document.getElementById("correctAnswer");
+        const tipImage = document.getElementById("tipImage");
+        const tipContinueButton = document.querySelector("#tipContainer .continue-button");
+
+        // 1. Oculta o quiz content
+        document.getElementById("quizContent").style.display = "none";
+
+        // 2. Configura o texto de parabéns
+        tipPhrase.textContent = "Parabéns, você terminou o teste de conhecimento!";
+        tipPhrase.style.fontSize = "20px"; // Destaque para o texto
+        tipPhrase.style.fontWeight = "bold";
+
+        // 3. Oculta a área de resposta correta que não é necessária
+        correctAnswer.style.display = 'none';
+
+        // 4. Configura a imagem final
+        // A imagem é baseada na última pergunta (índice 9), mas usa o padrão respostaCorreta
+        tipImage.src = `img/respostaCorreta${personagem}10.png`;
+
+        // 5. Configura o botão para voltar ao menu (ou a página final)
+        tipContinueButton.textContent = "Voltar ao Menu";
+        tipContinueButton.onclick = () => {
+            window.location.href = "menu.html";
+        };
+
+        // 6. Exibe a tela de dica/finalização
+        tipContainer.style.display = "flex";
+    }
+
     function nextQuestion() {
       index++;
       if (index >= quizData.length) {
