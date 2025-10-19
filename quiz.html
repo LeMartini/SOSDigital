@@ -564,13 +564,13 @@
     }
 
     function nextQuestion() {
-      index++;
-      if (index >= quizData.length) {
-        window.location.href = "menu.html";
-      } else {
-        carregarPergunta();
-      }
-    }
+      index++;
+      if (index >= quizData.length) {
+        showCompletionScreen(); // <-- CORREÇÃO: Chama a tela de finalização
+      } else {
+        carregarPergunta();
+      }
+    }
 }
     function goBack() {
       // Ajuste a lógica de voltar para garantir que o estado seja resetado
