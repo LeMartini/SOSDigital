@@ -173,14 +173,45 @@
         color: #003d82; /* Cor do texto em azul mais escuro para contraste */
     }
 
+    /* CLASSE BASE PARA O VISUAL DA MENSAGEM */
+    .feedback-box {
+        width: 95%; /* Ocupa quase a largura toda */
+        padding: 8px 12px; /* Padding discreto */
+        border-radius: 12px; /* Cantos arredondados */
+        background-color: white; /* Fundo branco para destaque */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave para levantar */
+        
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        margin-top: -5px; 
+        margin-bottom: 5px; 
+        display: none; /* Começa escondido */
+    }
+
+    /* Estilo de Erro */
     .feedback-erro {
-    font-size: 16px;
-    font-weight: bold;
-    color: #721c24; /* Vermelho escuro para a mensagem de erro */
-    text-align: center;
-    margin-top: -10px; /* Reduz o espaço com o elemento acima */
-    display: none; /* Começa escondido */
-}
+        /* Herda as propriedades da .feedback-box, apenas define a cor da borda e texto */
+        border: 2px solid #721c24; /* Borda vermelha escura */
+        color: #721c24; /* Cor do texto em vermelho escuro */
+    }
+    
+    /* Estilo de Sucesso (NOVO!) */
+    .feedback-sucesso {
+        /* Herda as propriedades da .feedback-box, apenas define a cor da borda e texto */
+        border: 2px solid #155724; /* Borda verde escura */
+        color: #155724; /* Cor do texto em verde escuro */
+    }
+
+    /* Ajuste para a mensagem de feedback que estava com o ID antigo, agora será o .feedback-box */
+    .feedback-mensagem {
+        /* Esta classe será substituída pelas novas, mas é bom ter uma base */
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        margin-top: -10px; 
+        display: none; 
+    }
 
   </style>
 </head>
@@ -197,7 +228,7 @@
       <p class="question">Qual é a melhor atitude nesse caso?</p>
       
       <div class="options" id="optionsContainer"></div>
-            <p class="feedback-erro" id="feedbackMensagem">Resposta Incorreta, não se preocupe, vamos ver a resposta correta?</p>
+            <p class="feedback-box" id="feedbackMensagem">Resposta Incorreta, não se preocupe, vamos ver a resposta correta?</p>
       <button class="submit-button" onclick="submitAnswer()">Ver Resposta</button>
     </div>
 
@@ -343,6 +374,8 @@
       // 1. Resetar o estado da tela
       quizContent.classList.remove("correct-feedback-bg", "wrong-feedback-bg");
       document.getElementById("feedbackMensagem").style.display = 'none'; // USE ISTO
+      feedbackMensagem.classList.remove("feedback-sucesso", "feedback-erro"); 
+      feedbackMensagem.textContent = "";
       submitButton.textContent = "Validar Resposta";
       submitButton.onclick = submitAnswer; // Garante que o clique volte para o fluxo principal
       submitButton.disabled = false;
@@ -409,11 +442,11 @@
 
       try {
         await db.collection("respostasQuiz").add({
-          nomeUsuario: userName,
-          respostaEscolhida: selectedAnswer,
-          respostaQuiz: index + 1,
-          situacaoResposta: situacao,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+         nomeUsuario: userName,
+         respostaEscolhida: selectedAnswer,
+         respostaQuiz: index + 1,
+         situacaoResposta: situacao,
+         timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
       } catch (e) {
         console.error("Erro ao salvar resposta:", e);
@@ -437,47 +470,66 @@
           quizContent.classList.add("wrong-feedback-bg");
     
     // MOSTRA A NOVA MENSAGEM DE ERRO (Requisito 1)
-          const feedbackMensagem = document.getElementById("feedbackMensagem");
-          feedbackMensagem.textContent = "Resposta Incorreta, não se preocupe, vamos ver a resposta correta?";
-          feedbackMensagem.style.display = 'block'; // Torna visível
-          submitButton.textContent = "Ver Resposta Correta";
-          submitButton.onclick = showTipContainer; // Próximo clique vai para a tela de dica
-          
-          // Opcional: Adicionar um pequeno X na opção errada
-          document.querySelector(".selected")?.classList.add("wrong-answer");
+          const feedbackMensagem = document.getElementById("feedbackMensagem"); // Adicionar esta linha para a constante no escopo
+
+        if (acertou) {
+// ACERTOU: Fundo Verde e Próxima Pergunta
+         quizContent.classList.add("correct-feedback-bg");
+         submitButton.textContent = "Próxima Pergunta";
+
+         feedbackMensagem.textContent = "Você acertou, parabéns, vamos para a próxima pergunta?";
+         // *** MUDANÇA AQUI: Adiciona a classe de estilo de sucesso ***
+         feedbackMensagem.classList.add("feedback-sucesso"); 
+         feedbackMensagem.style.display = 'block'; 
+
+         document.querySelector(".selected")?.classList.add("correct-answer");
+
+        } else {
+         // ERROU: Fundo Vermelho e Ver Resposta Correta
+         quizContent.classList.add("wrong-feedback-bg");
+
+      // MOSTRA A NOVA MENSAGEM DE ERRO (Requisito 1)
+         feedbackMensagem.textContent = "Resposta Incorreta, não se preocupe, vamos ver a resposta correta?";
+         // *** MUDANÇA AQUI: Adiciona a classe de estilo de erro ***
+         feedbackMensagem.classList.add("feedback-erro");
+         feedbackMensagem.style.display = 'block'; 
+         submitButton.textContent = "Ver Resposta Correta";
+         submitButton.onclick = showTipContainer;
+         
+         document.querySelector(".selected")?.classList.add("wrong-answer");
       }
     }
 
     // NOVA FUNÇÃO para lidar com o clique "Ver Resposta Correta"
     function showTipContainer() {
-      const pergunta = quizData[index];
-      const correta = pergunta.correta;
-      const tipContinueButton = document.querySelector("#tipContainer .continue-button");
+      const pergunta = quizData[index];
+      const correta = pergunta.correta;
+      const tipContinueButton = document.querySelector("#tipContainer .continue-button");
 
-      // 1. Configura as mensagens e estilos na tela de dica (#tipContainer)
-      
-      // Usa o elemento #tipPhrase para mostrar a frase de feedback
-       document.getElementById("tipPhrase").textContent = ""; // Garante que está vazio ou define uma nova frase neutra.
+      // 1. Configura as mensagens e estilos na tela de dica (#tipContainer)
+
+      // Usa o elemento #tipPhrase para mostrar a frase de feedback
+      document.getElementById("tipPhrase").textContent = ""; // Garante que está vazio ou define uma nova frase neutra.
        document.getElementById("tipPhrase").style.color = '#333';
-      
-      // 2. Mostra a resposta correta
-      // O ID #correctAnswer já tem o estilo verde no seu HTML e CSS (ótimo!)
-      document.getElementById("correctAnswer").textContent = "Resposta correta: " + correta;
-      document.getElementById("correctAnswer").style.display = 'block'; // Garante que a resposta correta seja exibida
 
-      // 3. Adiciona a Imagem (que é a dica)
-      // Usamos o padrão de nome de arquivo que você já estava usando
-      document.getElementById("tipImage").src = `img/respostaCorreta${personagem}${pergunta.imagem}.png`;
+      // 2. Mostra a resposta correta
+      // O ID #correctAnswer já tem o estilo verde no seu HTML e CSS (ótimo!)
+      document.getElementById("correctAnswer").textContent = "Resposta correta: " + correta;
+      document.getElementById("correctAnswer").style.display = 'block'; // Garante que a resposta correta seja exibida
 
-      // 4. Altera o botão da tela de DICA para "Próxima Pergunta"
-      tipContinueButton.onclick = nextQuestion;
-      tipContinueButton.textContent = "Próxima Pergunta";
+      // 3. Adiciona a Imagem (que é a dica)
+      // Usamos o padrão de nome de arquivo que você já estava usando
+      document.getElementById("tipImage").src = `img/respostaCorreta${personagem}${pergunta.imagem}.png`;
+
+      // 4. Altera o botão da tela de DICA para "Próxima Pergunta"
+      tipContinueButton.onclick = nextQuestion;
+      tipContinueButton.textContent = "Próxima Pergunta";
 
 
-      // 5. Transiciona a tela
-      document.getElementById("quizContent").style.display = "none";
-      document.getElementById("tipContainer").style.display = "flex";
-    }
+      // 5. Transiciona a tela
+      document.getElementById("quizContent").style.display = "none";
+      document.getElementById("tipContainer").style.display = "flex";
+    }
 
     function nextQuestion() {
       index++;
@@ -487,7 +539,7 @@
         carregarPergunta();
       }
     }
-
+}
     function goBack() {
       // Ajuste a lógica de voltar para garantir que o estado seja resetado
       const isTipVisible = document.getElementById("tipContainer").style.display === "flex";
