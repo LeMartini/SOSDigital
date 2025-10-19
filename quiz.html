@@ -49,22 +49,37 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 15px; /* Reduzi de 20px para 15px para começar */
     }
     .guide-image {
       max-width: 80%;
+      margin-bottom: 5px; /* Um pequeno espaçamento após a imagem */
     }
+
     .question {
       font-size: 18px;
       text-align: center;
       color: #333;
+      margin-bottom: 10px; /* Espaçamento após a pergunta */
     }
+
     .options {
       width: 100%;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      margin-bottom: 10px; /* Espaçamento entre as opções e o feedback/botão */
     }
+
+    .feedback-erro {
+      font-size: 16px;
+      font-weight: bold;
+      color: #721c24;
+      text-align: center;
+      margin-top: -5px; /* Puxa um pouco para cima das opções */
+      margin-bottom: 10px; /* Dá um espaço antes do botão */
+      display: none;
+      }
     .option {
       background-color: #eee;
       padding: 12px;
