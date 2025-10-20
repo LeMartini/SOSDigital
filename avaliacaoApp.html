@@ -114,20 +114,20 @@
 
       text-align: center;
 
-      transition: background-color 0.3s;
-
+      transition: background-color 0.3s, border-color 0.3s; /* Adiciona transição para borda */
+      border: 1px solid #eee; /* Borda neutra inicial */
     }
 
     .option:hover {
 
-      background-color: #ddd;
+      background-color: #9ecdff;
 
     }
 
     .selected {
-
       background-color: #cce5ff;
-
+      border: 1px solid #0056b3;
+      color: #003d82;
     }
 
     .submit-button {
